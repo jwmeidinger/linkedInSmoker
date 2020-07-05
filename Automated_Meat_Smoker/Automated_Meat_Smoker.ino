@@ -1,7 +1,12 @@
+// Author: Jordan Meidinger
+// Date: 7/5/2020
+// Whole build can be found on my LinkedIn jwmeidinger
+
+// Imports
 #include <Servo.h>
 #include <LiquidCrystal.h>
 
-//Temp
+//Temp Items
 int ThermistorPin1 = 0;
 int ThermistorPin2 = 1;
 int Vo;
@@ -9,11 +14,11 @@ float R1 = 10000;
 float logR2, R2, T, Temp, meatTemp, smokerTemp;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
-// LCD
+// LCD Items
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  
 int Contrast=150;
 
-//Servo
+// Servo Items
 Servo myservo;
 int pos = 180;    // variable to store the servo position
 
@@ -22,7 +27,7 @@ int count = 0;
 int mins  = 0;
 int hours = 0;
 
-// Setup items such as LCD and servos
+// Setup pins and settings
 void setup() {
 myservo.attach(9);  // attaches the servo on pin 9 to the servo object
 analogWrite(6,Contrast);
@@ -40,11 +45,11 @@ float getTemp(int thermistorPin){
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
   T = T - 273.15;
   T = (T * 9.0)/ 5.0 + 32.0; 
-
+  // Printing to the computer console if you don't want to hook up an LCD
   Serial.print("Temperature: "); 
-  Serial.print(T-4); // Added two due to lack of resistors
+  Serial.print(T-4); 
   Serial.println(" F");
-  return T-4;
+  return T-4; // Added due to accuracy being off due to resistors not being exactly right
 }
 
 // Used to print to hte LCD Screen
@@ -79,7 +84,7 @@ void printLCD(){
 }
 
 void currentTime(){
-  count = count + 5; // This is 5 seconds as there is two 2.5 delays
+  count = count + 5; // This is 5 seconds as there is two 2.5 delays one in the display and one in the loop
   if (count == 60){
     mins = 1 + mins;
     count = 0;
@@ -96,10 +101,10 @@ void loop() {
   currentTime(); // Sets the times for the Meat
   smokerTemp = getTemp(ThermistorPin1); // Get Internal Temp of Smoker
   meatTemp = getTemp(ThermistorPin2);  // Get Temp of Meat
+  
 
-
-  // Still need to Figure this out
-  myservo.write(85); // Fully open under 
+  // Smoker setting we want the temp at 180 for the whole smoke time
+  myservo.write(0); // Fully open under 
   if (smokerTemp > 150.0){
     myservo.write(40);
   };
@@ -115,9 +120,13 @@ void loop() {
   if (smokerTemp > 180.0){
     myservo.write(85);
   };
-  printLCD(); // Display the info on LCD
+
+  // Stops the Smoker if you want a time limit
+  if (hours = 17){
+    myservo.write(95);
+    break;
+  };
   
+  printLCD(); // Display the info on LCD
   delay(2500);
-
-
 }

@@ -29,8 +29,8 @@ int hours = 0;
 
 // Setup pins and settings
 void setup() {
-myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-analogWrite(6,Contrast);
+myservo.attach(9);  // Attaches the servo on pin 9 to the servo object
+analogWrite(6,Contrast); // This tells the LCD the contrast of the screen
 lcd.begin(16, 2);
 lcd.noAutoscroll();
 Serial.begin(9600);
@@ -45,10 +45,12 @@ float getTemp(int thermistorPin){
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
   T = T - 273.15;
   T = (T * 9.0)/ 5.0 + 32.0; 
+  
   // Printing to the computer console if you don't want to hook up an LCD
   Serial.print("Temperature: "); 
   Serial.print(T-4); 
   Serial.println(" F");
+  
   return T-4; // Added due to accuracy being off due to resistors not being exactly right
 }
 
